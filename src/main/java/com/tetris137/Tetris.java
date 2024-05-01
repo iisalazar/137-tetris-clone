@@ -33,9 +33,6 @@ public class Tetris extends Application {
 
     private static int nLines = 0;
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 
     @Override
     public void start(Stage stage) throws Exception {
