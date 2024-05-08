@@ -10,6 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.InetAddress;
 
 public class WaitingRoom {
     @FXML
@@ -27,12 +28,25 @@ public class WaitingRoom {
     @FXML
     Button joinButton;
 
+    // waiting-room-1.fxml modification
+    @FXML
+    Label userIpLabel;
+    private String userIP;
+
     // called by the FXML loader after the labels declared above are injected:
     public void initialize() {
-        joinButton.setText("Join Game");
-        usernameLabel.setText("Username: ");
-        ipLabel.setText("Host IP Address: ");
-        portLabel.setText("Port: ");
+        // joinButton.setText("Join Game");
+        // usernameLabel.setText("Username: ");
+        // ipLabel.setText("Host IP Address: ");
+        // portLabel.setText("Port: ");
+
+        // waiting-room-1.fxml modification
+        try {
+            userIP = InetAddress.getLocalHost().getHostAddress();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        userIpLabel.setText(userIP);
 
         // set the prompt text for the text fields
         usernameField.setPromptText("Enter your username");
