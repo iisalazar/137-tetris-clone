@@ -1,5 +1,6 @@
 package com.tetris137;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 
@@ -65,9 +67,14 @@ public class WaitingRoom {
         // wait for the server to start the game
         System.out.println("Joining game with username: " + username + " ip: " + ip + " port: " + port);
 
+        // starts a server 
+        ChatServer server = new ChatServer(ip, Integer.parseInt(port));
+        server.start();
+
         // switch to the game scene
         Stage stage = (Stage) joinButton.getScene().getWindow();
-        Tetris tetris = new Tetris();
+        // Tetris tetris = new Tetris();
+        TetrisClient tetris = new TetrisClient();
         tetris.start(stage);
     }
 }
