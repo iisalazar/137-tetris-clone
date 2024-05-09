@@ -14,39 +14,39 @@ import java.io.IOException;
 import java.net.*;
 
 public class ChatClient extends Application{
-    private static final DatagramSocket socket;
-    private static final InetAddress address;
-    private static final String username = "Ernest"; // todo: use given username
-    private static final int SERVER_PORT = 8000; // todo: use given port
+    private DatagramSocket socket;
+    private InetAddress address;
+    private String givenIp;
+    private String username = "Ernest"; // todo: use given username
+    private int server_port = 8000; // todo: use given port
 
     // gui
     private static final TextArea messageArea = new TextArea();
     private static final TextField inputBox = new TextField();
 
-    static {
+    public void main(String[] args) {
+
+        System.out.println("Creating chat client for " + username);
+
         try {
             socket = new DatagramSocket(); // would use available port
         } catch (SocketException e) {
             throw new RuntimeException(e);
         }
-    }
 
-    static {
         try {
-            address  = InetAddress.getByName("localhost"); // todo: make changeable
+            address  = InetAddress.getByName(givenIp); // todo: make changeable
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
 
-    public static void main(String[] args) {
         // receiving messages
         ChatClientThread clientThread = new ChatClientThread(socket, messageArea);
         clientThread.start();
 
         // sent initilization to server
         byte[] uuid = ("init;" + username).getBytes();
-        DatagramPacket initialize = new DatagramPacket(uuid, uuid.length, address, SERVER_PORT);
+        DatagramPacket initialize = new DatagramPacket(uuid, uuid.length, address, server_port);
         try {
             socket.send(initialize);
         } catch (Exception e) {
@@ -71,7 +71,7 @@ public class ChatClient extends Application{
                 inputBox.setText(""); // remove text from input box
 
                 // create a packet & send
-                DatagramPacket send = new DatagramPacket(msg, msg.length, address, SERVER_PORT);
+                DatagramPacket send = new DatagramPacket(msg, msg.length, address, server_port);
                 try {
                     socket.send(send);
                 } catch (IOException e) {
@@ -85,7 +85,17 @@ public class ChatClient extends Application{
         primaryStage.show();
     }
 
-    
+    public void setUsername(String uname) {
+        username = uname;
+    }
+
+    public void setAdd(String add) {
+        givenIp = add;
+    }
+
+    public void setPort(int p) {
+        server_port = p;
+    }
 
 
 }
