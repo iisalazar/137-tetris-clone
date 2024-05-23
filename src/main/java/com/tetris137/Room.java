@@ -20,7 +20,7 @@ public class Room extends Application {
         // then, next page should show the tetris game
         // for now we will just show the tetris game
         // but we need to show the first room first
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("waiting-room-1.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("welcome-screen.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);

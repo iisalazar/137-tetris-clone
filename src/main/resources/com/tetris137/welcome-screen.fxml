@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tetris137.WelcomeScreen">
+   <VBox alignment="TOP_CENTER" layoutX="222.0" layoutY="95.0" spacing="5.0">
+      <children>
+         <Label fx:id="usernameLabel2" text="Username">
+            <font>
+               <Font name="Impact" size="21.0" />
+            </font>
+         </Label>
+         <TextField fx:id="usernameField" alignment="CENTER" promptText="Enter your username" />
+      </children>
+   </VBox>
+   <Text layoutX="207.0" layoutY="82.0" strokeType="OUTSIDE" strokeWidth="0.0" text="TITRES" wrappingWidth="186.6195068359375">
+      <font>
+         <Font name="Impact" size="67.0" />
+      </font>
+   </Text>
+   <Line endX="285.10009765625" endY="360.1999816894531" layoutX="14.0" layoutY="3.0" startX="285.10009765625" startY="174.60000610351562" />
+   <VBox alignment="CENTER" layoutX="394.0" layoutY="174.0" spacing="5.0">
+      <children>
+         <Label fx:id="usernameLabel" text="Join a Game">
+            <font>
+               <Font name="Impact" size="30.0" />
+            </font>
+         </Label>
+         <Label fx:id="ipLabel" text="Server IP">
+            <font>
+               <Font name="Impact" size="21.0" />
+            </font>
+         </Label>
+         <TextField fx:id="ipJoinField" alignment="CENTER" promptText="Enter the server IP" />
+         <Label fx:id="portLabel" text="Server PORT">
+            <font>
+               <Font name="Impact" size="21.0" />
+            </font>
+         </Label>
+         <TextField fx:id="portJoinField" alignment="CENTER" promptText="Enter the server port" />
+         <Button fx:id="joinButton" onAction="#joinGame" text="Start Game" />
+      </children>
+   </VBox>
+   <VBox alignment="CENTER" layoutX="60.0" layoutY="177.0" prefHeight="130.0" prefWidth="162.0" spacing="5.0">
+      <children>
+         <Label fx:id="ipLabel11" text="Host a Game">
+            <font>
+               <Font name="Impact" size="30.0" />
+            </font>
+         </Label>
+         <Label fx:id="portLabel1" text="Server PORT">
+            <font>
+               <Font name="Impact" size="21.0" />
+            </font>
+         </Label>
+         <TextField fx:id="portHostField" alignment="CENTER" promptText="Enter the server port" />
+         <Button fx:id="hostButton" onAction="#joinGame" text="Host Game" />
+      </children>
+   </VBox>
+</AnchorPane>
