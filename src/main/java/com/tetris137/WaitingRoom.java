@@ -10,7 +10,6 @@ import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.event.ActionEvent;
 
-
 import java.net.*;
 
 public class WaitingRoom {
@@ -73,14 +72,10 @@ public class WaitingRoom {
         // Stage stage = (Stage) joinButton.getScene().getWindow();
         // // Tetris tetris = new Tetris();
         // TetrisClient tetris = new TetrisClient();
-        // tetris.start(stage);
-
-        nextRoom(event);
-
-        
+        // tetris.start(stage);        
     }
 
-    public void hostGame(ActionEvent event) throws Exception {
+    public void hostGame() throws Exception {
         // Store user data
         UserData ud = UserData.getInstance();
 
@@ -95,16 +90,47 @@ public class WaitingRoom {
         ChatServer server = new ChatServer(ud.getIP(), ud.getPort());
         server.start();
 
-        nextRoom(event);
+        createClient();
+
+        // switch to the game scene
+        Stage stage = (Stage) hostButton.getScene().getWindow();
+        // Tetris tetris = new Tetris();
+        WaitingRoom1 tetris = new WaitingRoom1();
+        tetris.start(stage);
+
+        // nextRoom(event);
 
         // todo: add screen
     }
 
-    public void nextRoom(ActionEvent event) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("waiting-screen.fxml"));
-        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+    public void createClient() throws UnknownHostException {
+        DatagramSocket socket;
+    
+        UserData ud = UserData.getInstance();
+
+        System.out.println("Creating chat client for " + ud.getUserName());
+
+        try {
+            socket = new DatagramSocket(); 
+        } catch (SocketException e) {
+            throw new RuntimeException(e);
+        }
+
+        // receiving messages
+        ChatClientThread clientThread = new ChatClientThread(socket);
+        clientThread.start();
+
+        ud.setSocket(socket);
+        ud.setClientThread(clientThread);
+
+        // sent initilization to server
+        byte[] uuid = ("init;").getBytes();
+        DatagramPacket initialize = new DatagramPacket(uuid, uuid.length, ud.getInetAddress(), ud.getServerPort());
+        try {
+            socket.send(initialize);
+            System.out.println("Client: Successfully sent init to Server.");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

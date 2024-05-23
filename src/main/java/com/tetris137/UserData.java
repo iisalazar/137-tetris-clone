@@ -1,5 +1,9 @@
 package com.tetris137;
 
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 // reference: https://youtu.be/MsgiJdf5njc?feature=shared
 
 public class UserData {
@@ -7,9 +11,13 @@ public class UserData {
     private String userName;
     private String ipGiven;
     private String ipServer;
+    private InetAddress ipServerInet;
     private int portServer;
     private boolean isHost;
     private int port;
+    private DatagramSocket sock;
+    private ChatClientThread receiver;
+    private int playerCount = 100;
 
     public static UserData getInstance() {
         return instance;
@@ -26,7 +34,6 @@ public class UserData {
     public int getPort() {
         return port;
     }
-
     
     public String getServerIP() {
         return ipServer;
@@ -48,8 +55,9 @@ public class UserData {
         port = p;
     }
 
-    public void setServerIP(String ip) {
+    public void setServerIP(String ip) throws UnknownHostException {
         ipServer = ip;
+        ipServerInet = InetAddress.getLocalHost();
     }
 
     public void setServerPort(int p) {
@@ -62,5 +70,33 @@ public class UserData {
 
     public boolean getIsHost() {
         return isHost;
+    }
+
+    public void setSocket(DatagramSocket s) {
+        sock = s;
+    }
+
+    public DatagramSocket getSocket() {
+        return sock;
+    }
+
+    public void setClientThread (ChatClientThread t) {
+        receiver = t;
+    }
+
+    public ChatClientThread getClientThread() {
+        return receiver;
+    }
+
+    public InetAddress getInetAddress() {
+        return ipServerInet;
+    }
+
+    public void setPlayerCount(int c) {
+        playerCount = c;
+    }
+
+    public int getPlayerCount() {
+        return playerCount;
     }
 }

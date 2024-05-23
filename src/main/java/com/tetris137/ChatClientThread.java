@@ -18,9 +18,15 @@ public class ChatClientThread extends Thread {
         this.textArea = textArea;
     }
 
+    public ChatClientThread(DatagramSocket socket) {
+        this.socket = socket;
+    }
+
     @Override
     public void run() {
         System.out.println("starting thread");
+        UserData ud = UserData.getInstance();
+
         while (true) {
             DatagramPacket packet = new DatagramPacket(incoming, incoming.length);
             try {
@@ -28,9 +34,24 @@ public class ChatClientThread extends Thread {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            String message = new String(packet.getData(), 0, packet.getLength()) + "\n";
-            String current = textArea.getText();
-            textArea.setText(current + message);
+
+            String message = new String(packet.getData(), 0, packet.getLength());
+
+            if (message.contains("ReqP;")) {
+                message = message.replace("ReqP;", "");
+                ud.setPlayerCount(Integer.parseInt(message));
+                System.out.println("Sending number of players " + message);
+            } else if (message.contains("msg;")) {
+                message = message.replace("msg;", "");
+                continue;
+                // ud.setMessageArea(message + "\n");
+            }
+            // String current = textArea.getText();
+            // textArea.setText(current + message);
         }
+    }
+
+    public void setTextArea(TextArea textArea) {
+        this.textArea = textArea;
     }
 }
