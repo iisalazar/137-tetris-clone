@@ -6,6 +6,7 @@ import java.util.TimerTask;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -15,9 +16,10 @@ public class WaitingRoom1 extends Application {
     
     private static final Label title = new Label("TETRIS");
     private Label playerCountLabel = new Label("3");
-    private Label userType = new Label("You are the host");
+    private Label userType = new Label("You are a ...");
     private int playerCount = 3;
-    VBox root = new VBox();
+    private VBox root = new VBox();
+    private Button startGame = new Button("Start Game");
     
     @Override
     public void start(Stage stage) throws InterruptedException {
@@ -30,6 +32,14 @@ public class WaitingRoom1 extends Application {
             System.out.println("Client: Player Count Request Sent.");
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+
+        if (ud.getIsHost()) {
+            userType.setText("You are a Host!");
+            root.getChildren().addAll(title, userType, playerCountLabel, startGame);
+        } else {
+            userType.setText("Waiting for Host to start the Game!");
+            root.getChildren().addAll(title, userType, playerCountLabel);
         }
 
         // Thread.sleep(2000);        
@@ -45,8 +55,7 @@ public class WaitingRoom1 extends Application {
         };
         upd.schedule(updateTask, 300);
 
-        root.getChildren().addAll(title, userType, playerCountLabel);
-        Scene scene = new Scene(root, 200, 200);
+        Scene scene = new Scene(root, 600, 400);
         stage.setScene(scene);
         stage.show();
     }
