@@ -4,12 +4,15 @@ import java.net.DatagramPacket;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import javafx.application.Platform;
 
 public class WaitingRoom1 extends Application {
@@ -20,10 +23,13 @@ public class WaitingRoom1 extends Application {
     private int playerCount = 3;
     private VBox root = new VBox();
     private Button startGame = new Button("Start Game");
+    private Label serverCred = new Label();
     
     @Override
     public void start(Stage stage) throws InterruptedException {
         UserData ud = UserData.getInstance();
+
+        serverCred.setText("Server Credentials: " + ud.getServerIP() + " | " + ud.getServerPort());
   
         byte[] msgb = ("ReqP;").getBytes();
         DatagramPacket requestPlayerCount = new DatagramPacket(msgb, msgb.length, ud.getInetAddress(), ud.getServerPort());
@@ -36,24 +42,34 @@ public class WaitingRoom1 extends Application {
 
         if (ud.getIsHost()) {
             userType.setText("You are a Host!");
-            root.getChildren().addAll(title, userType, playerCountLabel, startGame);
+            root.getChildren().addAll(title, serverCred, userType, playerCountLabel, startGame);
         } else {
             userType.setText("Waiting for Host to start the Game!");
-            root.getChildren().addAll(title, userType, playerCountLabel);
+            root.getChildren().addAll(title, serverCred, userType, playerCountLabel);
         }
 
-        // Thread.sleep(2000);        
-        Timer upd = new Timer();
-        TimerTask updateTask = new TimerTask() {
-            @Override
-            public void run() {
-                Platform.runLater(new Runnable() {
-                    public void run() {
-                    playerCountLabel.setText("Number of Players: " + ud.getPlayerCount());
-                }
-            });}
-        };
-        upd.schedule(updateTask, 300);
+        // Thread.sleep(2000);
+        Timeline t = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            playerCountLabel.setText("Number of Players: " + ud.getPlayerCount());
+        }));
+        t.setCycleCount(Timeline.INDEFINITE);
+        t.play();
+        
+        // Timer upd = new Timer();
+        // TimerTask updateTask = new TimerTask() {
+        //     @Override
+        //     public void run() {
+        //         Platform.runLater(new Runnable() {
+        //             public void run() {
+        //             playerCountLabel.setText("Number of Players: " + ud.getPlayerCount());
+        //         }
+        //     });}
+        // };
+        // upd.schedule(updateTask, 300);
+
+        startGame.setOnAction(event -> {
+            playerCountLabel.setText("Number of Players: " + ud.getPlayerCount());
+        });
 
         Scene scene = new Scene(root, 600, 400);
         stage.setScene(scene);

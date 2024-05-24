@@ -49,6 +49,7 @@ public class ChatServer extends Thread {
                 Player newP = new Player(packet.getAddress(), packet.getPort());
                 players.add(newP);
                 System.out.println("Server: Player Added");
+                
             } else if (stringMessage.contains("ReqP;")) {
                 System.out.println("Server: Received Player Count Request.");
                 byte[] byteMessage = ("ReqP;" + String.valueOf(players.size())).getBytes();

@@ -52,8 +52,16 @@ public class WaitingRoom {
         ud.setUsername(usernameField.getText());
         ud.setIP(userIP);
         ud.setServerIP(ipJoinField.getText());
-        ud.setServerPort(Integer.parseInt(portHostField.getText()));
+        ud.setServerPort(Integer.parseInt(portJoinField.getText()));
         ud.setIsHost(false);
+
+        createClient();
+
+        // switch to the game scene
+        Stage stage = (Stage) hostButton.getScene().getWindow();
+        WaitingRoom1 tetris = new WaitingRoom1();
+        tetris.start(stage);
+
 
         // // starts a server if the ip provided is same as ip of current
         // if (ud.getIP().equals(InetAddress.getLocalHost().getHostAddress())) {
@@ -94,13 +102,8 @@ public class WaitingRoom {
 
         // switch to the game scene
         Stage stage = (Stage) hostButton.getScene().getWindow();
-        // Tetris tetris = new Tetris();
         WaitingRoom1 tetris = new WaitingRoom1();
         tetris.start(stage);
-
-        // nextRoom(event);
-
-        // todo: add screen
     }
 
     public void createClient() throws UnknownHostException {

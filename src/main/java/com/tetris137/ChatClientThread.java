@@ -40,7 +40,7 @@ public class ChatClientThread extends Thread {
             if (message.contains("ReqP;")) {
                 message = message.replace("ReqP;", "");
                 ud.setPlayerCount(Integer.parseInt(message));
-                System.out.println("Sending number of players " + message);
+                System.out.println("Client Thread: Received number of players " + message);
             } else if (message.contains("msg;")) {
                 message = message.replace("msg;", "");
                 continue;
