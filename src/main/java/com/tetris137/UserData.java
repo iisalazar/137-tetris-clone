@@ -18,6 +18,7 @@ public class UserData {
     private DatagramSocket sock;
     private ChatClientThread receiver;
     private int playerCount = 100;
+    private boolean gameStarted = false;
 
     public static UserData getInstance() {
         return instance;
@@ -99,4 +100,12 @@ public class UserData {
     public int getPlayerCount() {
         return playerCount;
     }
-}
+
+    public boolean getGameStarted() {
+        return gameStarted;
+    }
+
+    public void setGameStarted() {
+        gameStarted = true;
+    }
+ }

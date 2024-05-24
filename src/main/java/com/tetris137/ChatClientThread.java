@@ -45,6 +45,8 @@ public class ChatClientThread extends Thread {
                 message = message.replace("msg;", "");
                 continue;
                 // ud.setMessageArea(message + "\n");
+            } else if (message.contains("st4rting;")) {
+                ud.setGameStarted();
             }
             // String current = textArea.getText();
             // textArea.setText(current + message);

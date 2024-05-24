@@ -74,6 +74,16 @@ public class ChatServer extends Thread {
                     }
                 }
                 
+            } else if (stringMessage.contains("st4rt;")) {
+                byte[] byteMessage = ("st4rting;").getBytes();
+                for (Player player : players) {
+                    DatagramPacket sendPacket = new DatagramPacket(byteMessage, byteMessage.length, player.getAddress(), player.getPort());
+                    try {
+                        socket.send(sendPacket);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.tetris137;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -51,24 +52,28 @@ public class WaitingRoom1 extends Application {
         // Thread.sleep(2000);
         Timeline t = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
             playerCountLabel.setText("Number of Players: " + ud.getPlayerCount());
+
+            if (ud.getGameStarted()) {
+
+                playerCountLabel.setText("GAME STARTED");
+            //     TetrisMultiplayer mp = new TetrisMultiplayer();
+            //     mp.start(stage);
+            }
+
         }));
         t.setCycleCount(Timeline.INDEFINITE);
         t.play();
-        
-        // Timer upd = new Timer();
-        // TimerTask updateTask = new TimerTask() {
-        //     @Override
-        //     public void run() {
-        //         Platform.runLater(new Runnable() {
-        //             public void run() {
-        //             playerCountLabel.setText("Number of Players: " + ud.getPlayerCount());
-        //         }
-        //     });}
-        // };
-        // upd.schedule(updateTask, 300);
 
         startGame.setOnAction(event -> {
-            playerCountLabel.setText("Number of Players: " + ud.getPlayerCount());
+            byte[] startmsg = ("st4rt;").getBytes();
+            DatagramPacket start = new DatagramPacket(startmsg, startmsg.length, ud.getInetAddress(), ud.getServerPort());
+            try {
+                ud.getSocket().send(start);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            System.out.println("Host started the game.");
         });
 
         Scene scene = new Scene(root, 600, 400);
