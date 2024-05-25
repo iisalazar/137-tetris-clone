@@ -63,7 +63,7 @@ public class ChatServer extends Thread {
                     }
                 }
             } else if (stringMessage.contains("msg;")) {
-                stringMessage = stringMessage.replace("msg;", "");
+                // stringMessage = stringMessage.replace("msg;", "");
                 byte[] byteMessage = stringMessage.getBytes(); // string to bytes
                 for (Player player : players ) {
                     DatagramPacket sendPacket = new DatagramPacket(byteMessage, byteMessage.length, player.getAddress(), player.getPort()); // todo: add option for different ip

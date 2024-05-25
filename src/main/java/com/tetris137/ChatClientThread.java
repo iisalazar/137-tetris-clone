@@ -42,9 +42,10 @@ public class ChatClientThread extends Thread {
                 ud.setPlayerCount(Integer.parseInt(message));
                 System.out.println("Client Thread: Received number of players " + message);
             } else if (message.contains("msg;")) {
+                System.out.println("Client Thread: Received Message: " + message);
                 message = message.replace("msg;", "");
-                continue;
-                // ud.setMessageArea(message + "\n");
+                ud.addMessage(message+"\n");
+                System.out.println("Client Thread: Added to messageBox.");
             } else if (message.contains("st4rting;")) {
                 ud.setGameStarted();
             }

@@ -25,6 +25,7 @@ public class WaitingRoom1 extends Application {
     private VBox root = new VBox();
     private Button startGame = new Button("Start Game");
     private Label serverCred = new Label();
+    private Timeline t;
     
     @Override
     public void start(Stage stage) throws InterruptedException {
@@ -50,7 +51,7 @@ public class WaitingRoom1 extends Application {
         }
 
         // Thread.sleep(2000);
-        Timeline t = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+        t = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
             playerCountLabel.setText("Number of Players: " + ud.getPlayerCount());
 
             if (ud.getGameStarted()) {
@@ -58,8 +59,12 @@ public class WaitingRoom1 extends Application {
                 playerCountLabel.setText("GAME STARTED");
             //     TetrisMultiplayer mp = new TetrisMultiplayer();
             //     mp.start(stage);
-            }
+                t.stop();
+                Chat c = new Chat();
+                c.start(stage);
 
+
+            }
         }));
         t.setCycleCount(Timeline.INDEFINITE);
         t.play();

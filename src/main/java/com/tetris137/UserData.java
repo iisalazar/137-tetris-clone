@@ -4,6 +4,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import javafx.scene.control.TextArea;
+
 // reference: https://youtu.be/MsgiJdf5njc?feature=shared
 
 public class UserData {
@@ -20,7 +22,12 @@ public class UserData {
     private int playerCount = 100;
     private boolean gameStarted = false;
 
+    private static final TextArea messageArea = new TextArea();
+
     public static UserData getInstance() {
+        messageArea.setMaxWidth(500);
+        messageArea.setEditable(false);
+        messageArea.setDisable(true);
         return instance;
     }
 
@@ -107,5 +114,14 @@ public class UserData {
 
     public void setGameStarted() {
         gameStarted = true;
+    }
+
+    public TextArea getMessageArea() {
+        return messageArea;
+    }
+
+    public void addMessage(String msg) {
+        String current = messageArea.getText();
+        messageArea.setText(current + msg);
     }
  }
