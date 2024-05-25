@@ -32,9 +32,10 @@ public class TetrisClient extends Application {
     public static int[][] grid = new int[WIDTH / SIZE][HEIGHT / SIZE];
     public static Form object;
     @SuppressWarnings("exports")
+    public static Pane mainPane = new Pane();
     public static Pane group = new Pane();
     @SuppressWarnings("exports")
-    public static Scene scn = new Scene(group, WIDTH + 250, HEIGHT);
+    public static Scene scn = new Scene(mainPane, WIDTH + 250, HEIGHT);
     public static int score = 0;
     public static int top = 0;
     public static boolean game = true;
@@ -43,11 +44,8 @@ public class TetrisClient extends Application {
     private static int nLines = 0;
 
     // chatbox
-    private static final TextArea messageArea = new TextArea();
     private static final TextField inputBox = new TextField();
-    private DatagramSocket socket;
-    private InetAddress address;
-
+    private static VBox chatbox = new VBox(20);
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -76,59 +74,38 @@ public class TetrisClient extends Application {
         // chatbox ------------ 
         UserData ud = UserData.getInstance();
 
-        System.out.println("Creating chat client for " + ud.getUserName());
-
-        try {
-            socket = new DatagramSocket(); 
-        } catch (SocketException e) {
-            throw new RuntimeException(e);
-        }
-
-        try {
-            address  = InetAddress.getByName(ud.getIP()); 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        // receiving messages
-        ChatClientThread clientThread = new ChatClientThread(socket, messageArea);
-        clientThread.start();
-
-        // sent initilization to server
-        byte[] uuid = ("init;" + ud.getUserName()).getBytes();
-        DatagramPacket initialize = new DatagramPacket(uuid, uuid.length, address, ud.getPort());
-        try {
-            socket.send(initialize);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        messageArea.setPrefWidth(200);
-        messageArea.setTranslateX(WIDTH+10);
-        messageArea.setTranslateY(300);
+        chatbox.setTranslateX(WIDTH +10);
+        chatbox.setTranslateY(200);
+        chatbox.setPrefWidth(200);
 
         inputBox.setPrefWidth(200);
-        inputBox.setTranslateX(WIDTH+10);
-        inputBox.setTranslateY(500);
+        inputBox.setPromptText("Press Tab to Chat");
 
         inputBox.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                String temp = ud.getUserName() + ": " + inputBox.getText(); // message to send
+                String temp = "msg;" + ud.getUserName() + ": " + inputBox.getText(); // message to send// update messages on screen
                 byte[] msg = temp.getBytes(); // convert to bytes
                 inputBox.setText(""); // remove text from input box
+                inputBox.setPromptText("Press Tab to Chat");
+
 
                 // create a packet & send
-                DatagramPacket send = new DatagramPacket(msg, msg.length, address, ud.getPort());
+                DatagramPacket send = new DatagramPacket(msg, msg.length, ud.getInetAddress(), ud.getServerPort());
                 try {
-                    socket.send(send);
+                    ud.getSocket().send(send);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
         });
-        group.getChildren().addAll(messageArea, inputBox);
-        
+        chatbox.getChildren().addAll(ud.getMessageArea(), inputBox);
+        mainPane.getChildren().addAll(chatbox, group);
+
+        group.setOnMouseClicked(event -> group.requestFocus());
+        inputBox.setOnMouseClicked(event -> inputBox.requestFocus()); // currently not working
         // --------- chatbox
+
+        group.requestFocus();
 
         stage.setScene(scn);
         stage.setTitle("Tetris");

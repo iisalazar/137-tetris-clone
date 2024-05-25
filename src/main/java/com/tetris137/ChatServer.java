@@ -46,7 +46,8 @@ public class ChatServer extends Thread {
 
             // if a codeword is found, that means it is a new player and would be added to the players list.
             if (stringMessage.contains("init;")) {
-                Player newP = new Player(packet.getAddress(), packet.getPort());
+                String uname = stringMessage.replace("init;", "");
+                Player newP = new Player(packet.getAddress(), packet.getPort(), uname);
                 players.add(newP);
                 System.out.println("Server: Player Added");
                 

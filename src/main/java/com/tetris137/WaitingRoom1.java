@@ -61,7 +61,13 @@ public class WaitingRoom1 extends Application {
             //     mp.start(stage);
                 t.stop();
                 Chat c = new Chat();
-                c.start(stage);
+                TetrisClient tetris = new TetrisClient();
+                try {
+                    tetris.start(stage);
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
 
 
             }

@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 
 // reference: https://youtu.be/MsgiJdf5njc?feature=shared
 
@@ -21,6 +22,7 @@ public class UserData {
     private ChatClientThread receiver;
     private int playerCount = 100;
     private boolean gameStarted = false;
+    // private Chat chatBox;
 
     private static final TextArea messageArea = new TextArea();
 
@@ -124,4 +126,12 @@ public class UserData {
         String current = messageArea.getText();
         messageArea.setText(current + msg);
     }
+
+    // public void setChatBox(Chat cb) {
+    //     chatBox = cb;
+    // }
+
+    // public Chat getChatBox() {
+    //     return chatBox;
+    // }
  }

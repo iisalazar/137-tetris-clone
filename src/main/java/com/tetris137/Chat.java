@@ -18,7 +18,7 @@ public class Chat extends Application{
     public void start(Stage primaryStage) {
         UserData ud = UserData.getInstance();
 
-        inputBox.setMaxWidth(500);
+        inputBox.setMaxWidth(50);
 
         // inputBox.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> inputBox.requestFocus());
 
@@ -39,8 +39,9 @@ public class Chat extends Application{
         });
 
         // put everything on screen
-        Scene scene = new Scene(new VBox(35, ud.getMessageArea(), inputBox), 550, 300);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        // chatBox.getChildren().addAll(ud.getMessageArea(), inputBox);
+        // Scene scene = new Scene(chatBox);
+        // primaryStage.setScene(scene);
+        // primaryStage.show();
     }
 }

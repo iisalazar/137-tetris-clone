@@ -127,7 +127,7 @@ public class WaitingRoom {
         ud.setClientThread(clientThread);
 
         // sent initilization to server
-        byte[] uuid = ("init;").getBytes();
+        byte[] uuid = ("init;" + ud.getUserName()).getBytes();
         DatagramPacket initialize = new DatagramPacket(uuid, uuid.length, ud.getInetAddress(), ud.getServerPort());
         try {
             socket.send(initialize);
