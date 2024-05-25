@@ -44,7 +44,7 @@ public class UserData {
     public int getPort() {
         return port;
     }
-    
+
     public String getServerIP() {
         return ipServer;
     }
@@ -67,7 +67,7 @@ public class UserData {
 
     public void setServerIP(String ip) throws UnknownHostException {
         ipServer = ip;
-        ipServerInet = InetAddress.getLocalHost();
+        ipServerInet = InetAddress.getByName(ip);
     }
 
     public void setServerPort(int p) {
@@ -90,7 +90,7 @@ public class UserData {
         return sock;
     }
 
-    public void setClientThread (ChatClientThread t) {
+    public void setClientThread(ChatClientThread t) {
         receiver = t;
     }
 
@@ -128,10 +128,10 @@ public class UserData {
     }
 
     // public void setChatBox(Chat cb) {
-    //     chatBox = cb;
+    // chatBox = cb;
     // }
 
     // public Chat getChatBox() {
-    //     return chatBox;
+    // return chatBox;
     // }
- }
+}
