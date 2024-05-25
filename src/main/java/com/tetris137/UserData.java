@@ -67,7 +67,7 @@ public class UserData {
 
     public void setServerIP(String ip) throws UnknownHostException {
         ipServer = ip;
-        ipServerInet = InetAddress.getByName(ip);
+        ipServerInet = InetAddress.getLocalHost();
     }
 
     public void setServerPort(int p) {
