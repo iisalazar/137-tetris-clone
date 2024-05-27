@@ -60,7 +60,6 @@ public class WaitingRoom1 extends Application {
             //     TetrisMultiplayer mp = new TetrisMultiplayer();
             //     mp.start(stage);
                 t.stop();
-                Chat c = new Chat();
                 TetrisClient tetris = new TetrisClient();
                 try {
                     tetris.start(stage);
