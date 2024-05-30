@@ -65,7 +65,7 @@ public class TetrisClient extends Application {
         Text linesText = new Text(WIDTH + 25, 100, "Lines: " + nLines);
         linesText.setStyle("-fx-font: 24 arial;");
         linesText.setX(WIDTH + 25);
-        linesText.setY(100);
+        linesText.setY(70);
 
         group.getChildren().addAll(line, scoreText, linesText);
 
@@ -79,13 +79,14 @@ public class TetrisClient extends Application {
         UserData ud = UserData.getInstance();
 
         chatbox.setTranslateX(WIDTH +10);
-        chatbox.setTranslateY(200);
+        chatbox.setTranslateY(300);
         chatbox.setPrefWidth(200);
         
         scoreBox.setTranslateX(WIDTH + 10);
-        scoreBox.setTranslateY(400);
+        scoreBox.setTranslateY(90);
         scoreBox.setPrefWidth(200);
-        scoreBox.getChildren().addAll(ud.getScoreArea(), linesText);
+        scoreBox.setDisable(true);
+        scoreBox.getChildren().addAll(ud.getScoreArea());
 
         inputBox.setPrefWidth(200);
         inputBox.setPromptText("Press Tab to Chat");
