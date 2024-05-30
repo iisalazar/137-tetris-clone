@@ -2,28 +2,23 @@ package com.tetris137;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-// import com.tetris137.Controller;
-import java.util.*;
-import java.util.concurrent.CountDownLatch;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.css.Size;
-import javafx.event.EventHandler;
-import javafx.scene.Scene;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -36,26 +31,28 @@ public class TetrisClient extends Application {
     public static int[][] grid = new int[WIDTH / SIZE][HEIGHT / SIZE];
     public static Form object;
     @SuppressWarnings("exports")
-    public static Pane mainPane = new Pane();
+    public static final Pane mainPane = new Pane();
+    @SuppressWarnings("exports")
     public static Pane group = new Pane();
     @SuppressWarnings("exports")
     public static Scene scn = new Scene(mainPane, WIDTH + 800, HEIGHT);
     public static int score = 0;
     public static int top = 0;
     public static boolean game = true;
-    public static Form next = new Controller().makeRect();
+    public static Form next = Controller.makeRect();
 
     private static int nLines = 0;
 
     // chatbox
     private static final TextField inputBox = new TextField();
-    private static VBox scoreBox = new VBox(20);
-    private static VBox chatbox = new VBox(20);
+    private static final VBox scoreBox = new VBox(20);
+    private static final VBox chatbox = new VBox(20);
 
     // dummyGames
-    private Pane otherGroup = new Pane();
+    private final Pane otherGroup = new Pane();
 
 
+    @SuppressWarnings("exports")
     @Override
     public void start(Stage stage) throws Exception {
         // init: get usernames of all users
@@ -73,13 +70,15 @@ public class TetrisClient extends Application {
         linesText.setX(WIDTH + 25);
         linesText.setY(70);
 
+        mainPane.setStyle("-fx-background-color: #D5D5D5;");
+
         group.getChildren().addAll(line, scoreText, linesText);
 
         Form a = next;
         group.getChildren().addAll(a.a, a.b, a.c, a.d);
         moveOnKeyPress(a);
         object = a;
-        next = new Controller().makeRect();
+        next = Controller.makeRect();
 
         // chatbox ------------ 
         UserData ud = UserData.getInstance();
@@ -134,42 +133,38 @@ public class TetrisClient extends Application {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                Platform.runLater(new Runnable(){
-                    public void run() {
-                        if (object.a.getY() == 0 || object.b.getY() == 0 || object.c.getY() == 0
-                                || object.d.getY() == 0)
-                            top++;
-                        else
-                            top = 0;
-
-                        if (top == 2) {
-                            Text over = new Text(WIDTH + 25, 200, "Game Over");
-                            over.setStyle("-fx-font: 24 arial;");
-                            over.setX(10);
-                            over.setY(250);
-                            group.getChildren().add(over);
-                            game = false;
+                Platform.runLater(() -> {
+                    if (object.a.getY() == 0 || object.b.getY() == 0 || object.c.getY() == 0
+                            || object.d.getY() == 0)
+                        top++;
+                    else
+                        top = 0;
+                    
+                    if (top == 2) {
+                        Text over = new Text(WIDTH + 25, 200, "Game Over");
+                        over.setStyle("-fx-font: 24 arial;");
+                        over.setX(10);
+                        over.setY(250);
+                        group.getChildren().add(over);
+                        game = false;
+                    }
+                    
+                    if (top == 15) {
+                        System.exit(0);
+                    }
+                    
+                    if (game) {
+                        group.setOnMouseClicked(event -> group.requestFocus());
+                        MoveDown(object);
+                        otherGroup.getChildren().clear();
+                        try {
+                            getBinary();
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-
-                        if (top == 15) {
-                            System.exit(0);
-                        }
-
-                        if (game) {
-                            group.setOnMouseClicked(event -> group.requestFocus());
-                            moveDown(object);
-                            otherGroup.getChildren().clear();
-                            try {
-                                getBinary();
-                            } catch (IOException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            }
-                            setOtherGroup();
-                            scoreText.setText("Score: " + score);
-                            linesText.setText("Lines: " + nLines);
-                        }
-
+                        setOtherGroup();
+                        scoreText.setText("Score: " + score);
+                        linesText.setText("Lines: " + nLines);
                     }
                 });
             }
@@ -195,24 +190,40 @@ public class TetrisClient extends Application {
     }
 
     private void moveOnKeyPress(Form form) {
-        scn.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                switch (event.getCode()) {
-                    case RIGHT:
-                        new Controller().moveRight(form);
-                        break;
-                    case LEFT:
-                        new Controller().moveLeft(form);
-                        break;
-                    case DOWN:
-                        moveDown(form);
-                        updateScore(1);
-                        break;
-                    case UP:
-                        rotate(form);
-                        break;
-                }
+        scn.setOnKeyPressed((KeyEvent event) -> {
+            switch (event.getCode()) {
+                case RIGHT:
+                    Controller.moveRight(form);
+                    break;
+                case LEFT:
+                    Controller.moveLeft(form);
+                    break;
+                case DOWN:
+                    MoveDown(form);
+                    updateScore(1);
+                    break;
+                case SPACE:
+                    while (form.a.getY() + MOVE < HEIGHT && form.b.getY() + MOVE < HEIGHT
+                            && form.c.getY() + MOVE < HEIGHT && form.d.getY() + MOVE < HEIGHT) {
+                        int movea = grid[(int) form.a.getX() / SIZE][((int) form.a.getY() / SIZE) + 1];
+                        int moveb = grid[(int) form.b.getX() / SIZE][((int) form.b.getY() / SIZE) + 1];
+                        int movec = grid[(int) form.c.getX() / SIZE][((int) form.c.getY() / SIZE) + 1];
+                        int moved = grid[(int) form.d.getX() / SIZE][((int) form.d.getY() / SIZE) + 1];
+                        if (movea == 0 && movea == moveb && moveb == movec && movec == moved) {
+                            form.a.setY(form.a.getY() + MOVE);
+                            form.b.setY(form.b.getY() + MOVE);
+                            form.c.setY(form.c.getY() + MOVE);
+                            form.d.setY(form.d.getY() + MOVE);
+                        } else
+                            break;
+                    }
+                    
+                    break;
+                case UP:
+                    rotate(form);
+                    break;
+                default:
+                    break;
             }
         });
     }
@@ -490,44 +501,13 @@ public class TetrisClient extends Application {
         }
 
         if (y >= 0) {
-            yb = rect.getY() + y * MOVE >= 0;
+            yb = rect.getY() - y * MOVE > 0;
         }
         if (y < 0) {
             yb = rect.getY() + y * MOVE < HEIGHT;
         }
 
         return xb && yb && grid[(int) rect.getX() / SIZE + x][(int) rect.getY() / SIZE - y] == 0;
-    }
-
-    private void moveDown(Form form) {
-        if (form.a.getY() == HEIGHT - SIZE || form.b.getY() == HEIGHT - SIZE || form.c.getY() == HEIGHT - SIZE
-                || form.d.getY() == HEIGHT - SIZE || moveA(form) || moveB(form) || moveC(form) || moveD(form)) {
-            grid[(int) form.a.getX() / SIZE][(int) form.a.getY() / SIZE] = 1;
-            grid[(int) form.b.getX() / SIZE][(int) form.b.getY() / SIZE] = 1;
-            grid[(int) form.c.getX() / SIZE][(int) form.c.getY() / SIZE] = 1;
-            grid[(int) form.d.getX() / SIZE][(int) form.d.getY() / SIZE] = 1;
-            clearLines(group);
-
-            Form a = next;
-            next = Controller.makeRect();
-            object = a;
-            group.getChildren().addAll(a.a, a.b, a.c, a.d);
-            moveOnKeyPress(a);
-        }
-
-        if (form.a.getY() + MOVE < HEIGHT && form.b.getY() + MOVE < HEIGHT && form.c.getY() + MOVE < HEIGHT
-                && form.d.getY() + MOVE < HEIGHT) {
-            int movea = grid[(int) form.a.getX() / SIZE][((int) form.a.getY() / SIZE) + 1];
-            int moveb = grid[(int) form.b.getX() / SIZE][((int) form.b.getY() / SIZE) + 1];
-            int movec = grid[(int) form.c.getX() / SIZE][((int) form.c.getY() / SIZE) + 1];
-            int moved = grid[(int) form.d.getX() / SIZE][((int) form.d.getY() / SIZE) + 1];
-            if (movea == 0 && movea == moveb && moveb == movec && movec == moved) {
-                form.a.setY(form.a.getY() + MOVE);
-                form.b.setY(form.b.getY() + MOVE);
-                form.c.setY(form.c.getY() + MOVE);
-                form.d.setY(form.d.getY() + MOVE);
-            }
-        }
     }
 
     private void moveDown(Rectangle rect) {
@@ -599,21 +579,22 @@ public class TetrisClient extends Application {
     }
 
     private void clearLines(Pane pane) {
-        ArrayList<Node> rects = new ArrayList<Node>();
-        ArrayList<Integer> lines = new ArrayList<Integer>();
-        ArrayList<Node> newrects = new ArrayList<Node>();
+        ArrayList<Node> rects = new ArrayList<>();
+        ArrayList<Integer> lines = new ArrayList<>();
+        ArrayList<Node> newrects = new ArrayList<>();
         int full = 0;
         for (int i = 0; i < grid[0].length; i++) {
-            for (int j = 0; j < grid.length; j++) {
-                if (grid[j][i] == 1)
+            for (int[] grid1 : grid) {
+                if (grid1[i] == 1) {
                     full++;
+                }
             }
             if (full == grid.length)
                 lines.add(i);
             // lines.add(i + lines.size());
             full = 0;
         }
-        if (lines.size() > 0)
+        if (!lines.isEmpty())
             do {
                 for (Node node : pane.getChildren()) {
                     if (node instanceof Rectangle)
@@ -653,7 +634,7 @@ public class TetrisClient extends Application {
                     }
                 }
                 rects.clear();
-            } while (lines.size() > 0);
+            } while (!lines.isEmpty());
     }
 
     private void getBinary() throws IOException {
@@ -663,9 +644,6 @@ public class TetrisClient extends Application {
         double x;
         double y;
         
-        int xCount = 0;
-        int yCount = 0;
-
         for (javafx.scene.Node node : group.getChildren()) {
             if (node instanceof Rectangle) {
                 Rectangle rect = (Rectangle) node;
@@ -698,7 +676,7 @@ public class TetrisClient extends Application {
         UserData ud = UserData.getInstance();
 
         if (ud.p0.equals("")) {
-            ;
+            System.out.println("p0 is empty");
         } else {
             int xCount0 = 0;
             int yCount0 = 0;
@@ -722,7 +700,7 @@ public class TetrisClient extends Application {
         }
 
         if (ud.p1.equals("")) {
-            ;
+            System.out.println("p1 is empty");            
         } else {
             int xCount1 = 0;
             int yCount1 = 0;
@@ -746,7 +724,7 @@ public class TetrisClient extends Application {
         }
 
         if (ud.p2.equals("")) {
-            ;
+            System.out.println("p2 is empty");
         } else {
             int xCount2 = 0;
             int yCount2 = 0;
@@ -770,7 +748,7 @@ public class TetrisClient extends Application {
         }
 
         if (ud.p3.equals("")) {
-            ;
+            System.out.println("p3 is empty");
         } else {
             int xCount3 = 0;
             int yCount3 = 0;
