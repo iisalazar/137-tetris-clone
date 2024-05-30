@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tetris137.WaitingRoom">
+    <VBox layoutX="14.0" layoutY="11.0" spacing="5.0">
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="TITRES" wrappingWidth="186.6195068359375">
+         <font>
+            <Font name="Impact" size="67.0" />
+         </font>
+         <VBox.margin>
+            <Insets bottom="30.0" />
+         </VBox.margin>
+      </Text>
+      <Label fx:id="usernameLabel" text="Username">
+         <font>
+            <Font name="Impact" size="21.0" />
+         </font>
+      </Label>
+        <TextField fx:id="usernameField" promptText="Enter your username" />
+      <Label fx:id="ipLabel" text="Server IP">
+         <font>
+            <Font name="Impact" size="21.0" />
+         </font>
+      </Label>
+        <TextField fx:id="ipField" promptText="Enter the server IP" />
+      <Label fx:id="portLabel" text="Server PORT">
+         <font>
+            <Font name="Impact" size="21.0" />
+         </font>
+      </Label>
+        <TextField fx:id="portField" promptText="Enter the server port" />
+        <Button fx:id="joinButton" onAction="#joinGame" text="Start Game" />
+    </VBox>
+   <VBox alignment="TOP_RIGHT" layoutX="436.0" layoutY="14.0" spacing="5.0">
+      <children>
+         <Label text="Your System">
+            <font>
+               <Font name="Impact" size="30.0" />
+            </font>
+         </Label>
+         <Label text="Your IP">
+            <font>
+               <Font name="Impact" size="21.0" />
+            </font>
+         </Label>
+         <Label fx:id="userIpLabel" text="-">
+            <font>
+               <Font name="Impact" size="21.0" />
+            </font>
+         </Label>
+         <Label text="Your PORT">
+            <font>
+               <Font name="Impact" size="21.0" />
+            </font>
+         </Label>
+         <Label fx:id="labelUserPort" text="-">
+            <font>
+               <Font name="Impact" size="21.0" />
+            </font>
+         </Label>
+      </children>
+   </VBox>
+</AnchorPane>
