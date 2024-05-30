@@ -63,6 +63,24 @@ public class ChatClientThread extends Thread {
                 String[] scoreParts = parts[2].split(":");
                 float score = Float.parseFloat(scoreParts[1]);
                 ud.updateUserScore(userName, score);
+            } else if (message.contains("UID;")) {
+                message = message.replace("UID;", "");
+                ud.setUID(message);
+                System.out.println("User given UID: " + message);
+            } else { // gamestate received
+                if (message.contains("0;")) {
+                    message = message.replace("0;", "");
+                    ud.p0 = message;
+                } else if (message.contains("1;")) {
+                    message = message.replace("1;", "");
+                    ud.p1 = message;
+                } else if (message.contains("2;")) {
+                    message = message.replace("2;", "");
+                    ud.p2 = message;
+                } else if (message.contains("3;")) {
+                    message = message.replace("3;", "");
+                    ud.p3 = message;
+                }
             }
         }
     }

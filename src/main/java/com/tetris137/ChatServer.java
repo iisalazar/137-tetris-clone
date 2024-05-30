@@ -41,15 +41,26 @@ public class ChatServer extends Thread {
 
             // convert packet data to string
             String stringMessage = new String(packet.getData(), 0, packet.getLength());
-            System.out.println("Server received: " + stringMessage);
+            // System.out.println("Server received: " + stringMessage);
 
             // if a codeword is found, that means it is a new player and would be added to
             // the players list.
             if (stringMessage.contains("init;")) {
+                byte[] returnUID = ("UID;" + String.valueOf(players.size())).getBytes();
+
                 String uname = stringMessage.replace("init;", "");
                 Player newP = new Player(packet.getAddress(), packet.getPort(), uname);
                 players.add(newP);
                 System.out.println("Server: Player Added + " + uname);
+
+                DatagramPacket sendPacket = new DatagramPacket(returnUID, returnUID.length, packet.getAddress(), packet.getPort());
+                try {
+                    socket.send(sendPacket);
+                    System.out.println("Server: Assigned " + uname + " to " + (players.size()-1));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
             } else if (stringMessage.contains("ReqP;")) {
                 System.out.println("Server: Received Player Count Request.");
                 byte[] byteMessage = ("ReqP;" + String.valueOf(players.size())).getBytes();
@@ -117,6 +128,16 @@ public class ChatServer extends Thread {
                         throw new RuntimeException(e);
                     }
                 }
+            } else { // gamestate received and should be forwarded;
+                for (Player player : players) {
+                    DatagramPacket forwardGS = new DatagramPacket(packet.getData(), packet.getData().length, player.getAddress(), player.getPort());
+                    try {
+                        socket.send(forwardGS);
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }            
             }
         }
     }

@@ -48,10 +48,17 @@ public class UserData {
     private int playerCount = 100;
     private boolean gameStarted = false;
     private HashMap<String, GameState> playerStates = new HashMap<String, GameState>();
+    private String UID;
     // private Chat chatBox;
 
     private static final TextArea messageArea = new TextArea();
     private static final TextArea scoreArea = new TextArea();
+
+    // gamestates
+    public String p0 = "";
+    public String p1 = "";
+    public String p2 = "";
+    public String p3 = "";
 
     public static UserData getInstance() {
         messageArea.setMaxWidth(500);
@@ -177,6 +184,14 @@ public class UserData {
             scores += "Score: " + gs.getScore() + "\n";
         }
         scoreArea.setText(scores);
+    }
+
+    public void setUID(String s) {
+        UID = s;
+    }
+
+    public String getUID() {
+        return UID;
     }
 
     // public void setChatBox(Chat cb) {
