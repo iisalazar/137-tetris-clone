@@ -12,6 +12,10 @@ public class Player {
         this.port = p;
         this.username = uname;
     }
+    
+    public String getUsername() {
+        return username;
+    }
 
     public InetAddress getAddress() {
         return address;

@@ -7,6 +7,8 @@ import java.net.InetAddress;
 import java.net.SocketException;
 // import com.tetris137.Controller;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -45,10 +47,12 @@ public class TetrisClient extends Application {
 
     // chatbox
     private static final TextField inputBox = new TextField();
+    private static VBox scoreBox = new VBox(20);
     private static VBox chatbox = new VBox(20);
 
     @Override
     public void start(Stage stage) throws Exception {
+        // init: get usernames of all users
         for (int a[] : grid) {
             Arrays.fill(a, 0);
         }
@@ -77,6 +81,11 @@ public class TetrisClient extends Application {
         chatbox.setTranslateX(WIDTH +10);
         chatbox.setTranslateY(200);
         chatbox.setPrefWidth(200);
+        
+        scoreBox.setTranslateX(WIDTH + 10);
+        scoreBox.setTranslateY(400);
+        scoreBox.setPrefWidth(200);
+        scoreBox.getChildren().addAll(ud.getScoreArea(), linesText);
 
         inputBox.setPrefWidth(200);
         inputBox.setPromptText("Press Tab to Chat");
@@ -99,7 +108,7 @@ public class TetrisClient extends Application {
             }
         });
         chatbox.getChildren().addAll(ud.getMessageArea(), inputBox);
-        mainPane.getChildren().addAll(chatbox, group);
+        mainPane.getChildren().addAll(chatbox, group, scoreBox);
 
         group.setOnMouseClicked(event -> group.requestFocus());
         inputBox.setOnMouseClicked(event -> inputBox.requestFocus()); // currently not working
@@ -115,7 +124,7 @@ public class TetrisClient extends Application {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                Platform.runLater(new Runnable() {
+                Platform.runLater(new Runnable(){
                     public void run() {
                         if (object.a.getY() == 0 || object.b.getY() == 0 || object.c.getY() == 0
                                 || object.d.getY() == 0)
@@ -148,6 +157,23 @@ public class TetrisClient extends Application {
         };
         fall.schedule(task, 0, 300);
     }
+    private void updateScore(int count){
+        score += count;
+        UserData ud = UserData.getInstance();
+        // emit event
+        String temp = "event:gameStateUpdated;" +
+                ud.getUserName() + ";" +
+                "score:" +
+                score + ";";
+        byte[] msg = temp.getBytes(); // convert to bytes
+        // create a packet & send
+        DatagramPacket send = new DatagramPacket(msg, msg.length, ud.getInetAddress(), ud.getServerPort());
+        try {
+            ud.getSocket().send(send);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private void moveOnKeyPress(Form form) {
         scn.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -162,7 +188,7 @@ public class TetrisClient extends Application {
                         break;
                     case DOWN:
                         moveDown(form);
-                        score++;
+                        updateScore(1);
                         break;
                     case UP:
                         rotate(form);
@@ -574,7 +600,7 @@ public class TetrisClient extends Application {
                     if (node instanceof Rectangle)
                         rects.add(node);
                 }
-                score += 50;
+                updateScore(50);
                 nLines++;
 
                 for (Node node : rects) {

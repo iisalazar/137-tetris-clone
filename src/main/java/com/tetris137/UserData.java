@@ -3,11 +3,36 @@ package com.tetris137;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 
 // reference: https://youtu.be/MsgiJdf5njc?feature=shared
+
+class GameState {
+    private float score;
+    private int lines;
+    
+    public GameState() {
+        score = 0;
+        lines = 0;
+    }
+    
+    public void setScore(float s) {
+        score = s;
+    }
+    public void setLines(int l) {
+        lines = l;
+    }
+    
+    public float getScore() {
+        return score;
+    }
+    
+    public int getLines() {
+        return lines;
+    }
+}
 
 public class UserData {
     private static final UserData instance = new UserData();
@@ -22,15 +47,22 @@ public class UserData {
     private ChatClientThread receiver;
     private int playerCount = 100;
     private boolean gameStarted = false;
+    private HashMap<String, GameState> playerStates = new HashMap<String, GameState>();
     // private Chat chatBox;
 
     private static final TextArea messageArea = new TextArea();
+    private static final TextArea scoreArea = new TextArea();
 
     public static UserData getInstance() {
         messageArea.setMaxWidth(500);
         messageArea.setEditable(false);
         messageArea.setDisable(true);
         return instance;
+    }
+    
+    public void setInitialPlayerState(String userName){
+        GameState gs = new GameState();
+        playerStates.put(userName, gs);
     }
 
     public String getUserName() {
@@ -121,10 +153,30 @@ public class UserData {
     public TextArea getMessageArea() {
         return messageArea;
     }
+    
+    public TextArea getScoreArea() {
+        return scoreArea;
+    }
 
     public void addMessage(String msg) {
         String current = messageArea.getText();
         messageArea.setText(current + msg);
+    }
+    
+    public void updateUserScore(String userName, float score) {
+        GameState gs = playerStates.get(userName);
+        gs.setScore(score);
+        renderScores();
+    }
+    
+    private void renderScores() {
+        String scores = "";
+        for (String name : playerStates.keySet()) {
+            GameState gs = playerStates.get(name);
+            scores += name + ":\n";
+            scores += "Score: " + gs.getScore() + "\n";
+        }
+        scoreArea.setText(scores);
     }
 
     // public void setChatBox(Chat cb) {

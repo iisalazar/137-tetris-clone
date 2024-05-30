@@ -44,13 +44,26 @@ public class ChatClientThread extends Thread {
             } else if (message.contains("msg;")) {
                 System.out.println("Client Thread: Received Message: " + message);
                 message = message.replace("msg;", "");
-                ud.addMessage(message+"\n");
+                ud.addMessage(message + "\n");
                 System.out.println("Client Thread: Added to messageBox.");
             } else if (message.contains("st4rting;")) {
                 ud.setGameStarted();
+            } else if (message.contains("query:getUsernames;")) {
+                String playerNames = message.replace("query:getUsernames;", "");
+                // names are separated by a comma
+                String[] names = playerNames.split(",");
+                for (String name : names) {
+                    ud.setInitialPlayerState(name);
+                }
+            } else if (message.contains("event:gameStateUpdated")) {
+                // Format
+                // event:gameStateUpdated;<userName>;score:<score>
+                String[] parts = message.split(";");
+                String userName = parts[1];
+                String[] scoreParts = parts[2].split(":");
+                float score = Float.parseFloat(scoreParts[1]);
+                ud.updateUserScore(userName, score);
             }
-            // String current = textArea.getText();
-            // textArea.setText(current + message);
         }
     }
 

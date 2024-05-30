@@ -50,7 +50,6 @@ public class ChatServer extends Thread {
                 Player newP = new Player(packet.getAddress(), packet.getPort(), uname);
                 players.add(newP);
                 System.out.println("Server: Player Added + " + uname);
-
             } else if (stringMessage.contains("ReqP;")) {
                 System.out.println("Server: Received Player Count Request.");
                 byte[] byteMessage = ("ReqP;" + String.valueOf(players.size())).getBytes();
@@ -64,7 +63,8 @@ public class ChatServer extends Thread {
                         throw new RuntimeException(e);
                     }
                 }
-            } else if (stringMessage.contains("msg;")) {
+            } 
+            else if (stringMessage.contains("msg;")) {
                 // stringMessage = stringMessage.replace("msg;", "");
                 byte[] byteMessage = stringMessage.getBytes(); // string to bytes
                 for (Player player : players) {
@@ -79,6 +79,35 @@ public class ChatServer extends Thread {
 
             } else if (stringMessage.contains("st4rt;")) {
                 byte[] byteMessage = ("st4rting;").getBytes();
+                for (Player player : players) {
+                    DatagramPacket sendPacket = new DatagramPacket(byteMessage, byteMessage.length, player.getAddress(),
+                            player.getPort());
+                    try {
+                        socket.send(sendPacket);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                // eventNames 
+                // event:gameStateUpdated;<userName>;score:<score>;lines:<lines>
+            } else if(stringMessage.contains("event:gameStateUpdated;")) {
+                byte[] byteMessage = stringMessage.getBytes(); // string to bytes
+                for (Player player : players) {
+                    DatagramPacket sendPacket = new DatagramPacket(byteMessage, byteMessage.length, player.getAddress(),
+                            player.getPort());
+                    try {
+                        socket.send(sendPacket);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            else if(stringMessage.contains("query:getUsernames")) {
+                StringBuilder stringBuilder = new StringBuilder();
+                for (Player player : players) {
+                    stringBuilder.append(player.getUsername()).append(",");
+                }
+                byte[] byteMessage = ("query:getUsernames;" + stringBuilder.toString()).getBytes();
                 for (Player player : players) {
                     DatagramPacket sendPacket = new DatagramPacket(byteMessage, byteMessage.length, player.getAddress(),
                             player.getPort());

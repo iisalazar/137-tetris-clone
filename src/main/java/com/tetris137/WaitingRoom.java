@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.event.ActionEvent;
 
+import java.io.IOException;
 import java.net.*;
 
 public class WaitingRoom {
@@ -133,6 +134,13 @@ public class WaitingRoom {
             socket.send(initialize);
             System.out.println("Client: Successfully sent init to Server.");
         } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        byte[] msg = "query:getUsernames;".getBytes();
+        DatagramPacket send = new DatagramPacket(msg, msg.length, ud.getInetAddress(), ud.getServerPort());
+        try {
+            ud.getSocket().send(send);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
